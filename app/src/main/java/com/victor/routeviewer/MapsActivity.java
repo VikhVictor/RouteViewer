@@ -2,22 +2,38 @@ package com.victor.routeviewer;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toolbar;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.xmlpull.v1.XmlPullParserFactory;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SupportMapFragment mFragment;
 
+    Toolbar toolbar;
+
+
+    //private
+    Route route;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        route = new Route(this, R.raw.track1);
+        for (LatLng ll : route.waypoints) {
+            Log.d("MyLog", " lon : " + ll.longitude + " lan : " + ll.latitude);
+        }
         setUpMapIfNeeded();
     }
 
@@ -41,8 +57,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setUpMap() {
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        mMap.addMarker(new MarkerOptions().position(route.waypoints.get(0)).title("Start"));
+        mMap.addMarker(new MarkerOptions().position(route.waypoints.get(route.waypoints.size() - 1)).title("Finish"));
+        mMap.addPolyline(new PolylineOptions().addAll(route.waypoints));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.waypoints.get(0),10));
     }
 
     @Override
