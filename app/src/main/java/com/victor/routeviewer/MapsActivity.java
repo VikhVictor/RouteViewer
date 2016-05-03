@@ -33,14 +33,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.maps_toolbar);
         initToolbar();
-        route = new Route(this, getIntent().getExtras().getString("path"));
+        route = new Route(this, getIntent().getExtras().getString(MenuActivity.INTENT_KEY_PATH));
         setUpMapIfNeeded();
     }
 
     private int initToolbar() {
         if (toolbar == null) { return -1; }
 
-        toolbar.setTitle("Map");
+        toolbar.setTitle(R.string.title_activity_maps);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

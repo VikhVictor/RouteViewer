@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RouteViewer</string>
+    <string name="title_activity_maps">Карта</string>
+    <string name="title_activity_menu">Меню</string>
+
+    <string name="ok_button">Выбрать</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="add_button">Открыть...</string>
+
+    <string name="dialog_hint">Откройте .gpx файл</string>
+
+</resources>

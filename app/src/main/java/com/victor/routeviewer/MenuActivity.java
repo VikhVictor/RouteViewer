@@ -26,8 +26,9 @@ import java.util.TreeSet;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String PREF_KEY = "com.victor.routeviewer";
+
     private static final String SET_KEY = "routes";
+    public static final String INTENT_KEY_PATH = "path";
 
     Button bOpen;
     Toolbar toolbar;
@@ -42,7 +43,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Route Viewer");
+        toolbar.setTitle(R.string.title_activity_menu);
         setSupportActionBar(toolbar);
 
         userRoutes = new ArrayList<String>();
@@ -71,7 +72,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                    intent.putExtra(INTENT_KEY_PATH, userRoutes.get(position));
+                    startActivity(intent);
                 }
             });
         }
@@ -94,14 +97,18 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 adapter.notifyDataSetChanged();
                 SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
                 editor.putStringSet(SET_KEY, tmp);
                 editor.commit();
 
-                // launch map activity with choosen route
 
-                /*Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra("path", gpx);
-                startActivity(intent);*/
+                preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Set<String> set = preferences.getStringSet(SET_KEY, new TreeSet<String>());
+
+                // launch map activity with choosen route
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra(INTENT_KEY_PATH, gpx);
+                startActivity(intent);
             }
         });
         alert = dialogBuilder.create();

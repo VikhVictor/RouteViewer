@@ -2,4 +2,11 @@
     <string name="app_name">RouteViewer</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_menu">Menu</string>
+
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="add_button">Open</string>
+
+    <string name="dialog_hint">Open .gpx file</string>
+
 </resources>

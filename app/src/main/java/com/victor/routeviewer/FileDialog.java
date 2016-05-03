@@ -32,8 +32,6 @@ import java.util.List;
  */
 public class FileDialog extends AlertDialog.Builder {
 
-    private static final String TITLE = "Choose .gpx file";
-    private static String currentPath;
     private Context context;
 
     LinearLayout dialogLayout, scrollLayout;
@@ -50,18 +48,17 @@ public class FileDialog extends AlertDialog.Builder {
     public FileDialog(final Context context) {
         super(context);
         this.context = context;
-        //currentPath = Environment.getExternalStorageDirectory().toString();
         initDialogView();
         refreshDialogView(Environment.getExternalStorageDirectory().toString());
 
-        this.setTitle(TITLE).setView(dialogLayout).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        this.setTitle(R.string.dialog_hint).setView(dialogLayout).setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!filename.equals(""))
                     listener.onFileSelected(filename);
                 //context.startActivity(new Intent(context, MapsActivity.class));
             }
-        }).setNegativeButton("Cansel", null);
+        }).setNegativeButton(R.string.cancel_button, null);
     }
 
     private void refreshDialogView(String path) {
@@ -78,14 +75,10 @@ public class FileDialog extends AlertDialog.Builder {
             fileList.setAdapter(adapter);
 
         } else {
-            Log.d("MyLog", "adapter init");
             getFileList(path);
             adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, filenames);
             fileList.setAdapter(adapter);
-
         }
-
-
     }
 
     private void initDialogView() {
@@ -95,13 +88,13 @@ public class FileDialog extends AlertDialog.Builder {
         breadCrumbs = new HorizontalScrollView(context);
         breadCrumbs.setHorizontalScrollBarEnabled(true);
         breadCrumbs.setVerticalScrollBarEnabled(true);
-        breadCrumbs.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        breadCrumbs.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                                ViewGroup.LayoutParams.WRAP_CONTENT));
         scrollLayout = new LinearLayout(context);
         scrollLayout.setOrientation(LinearLayout.HORIZONTAL);
-        scrollLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scrollLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                                ViewGroup.LayoutParams.WRAP_CONTENT));
         breadCrumbs.addView(scrollLayout);
-
-
         dialogLayout.addView(breadCrumbs);
 
         fileList = new ListView(context);
@@ -109,15 +102,10 @@ public class FileDialog extends AlertDialog.Builder {
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("MyLog", files.get(position).getAbsolutePath());
                 if (files.get(position).isDirectory()) {
                     refreshDialogView(files.get(position).getAbsolutePath());
                 } else {
-                    /*Intent intent = new Intent(context, MapsActivity.class);
-                    intent.putExtra("path", files.get(position).getAbsolutePath());
-                    context.startActivity(intent);*/
                     filename = files.get(position).getAbsolutePath();
-                    //view.setSelected(true);
                 }
             }
         });
