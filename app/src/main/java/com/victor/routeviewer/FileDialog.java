@@ -43,6 +43,8 @@ public class FileDialog extends AlertDialog.Builder {
     private ArrayAdapter<String> adapter;
     List<File> files;
     ArrayList<String> filenames;
+    private DialogListener listener;
+    private String filename = "";
 
 
     public FileDialog(final Context context) {
@@ -55,7 +57,9 @@ public class FileDialog extends AlertDialog.Builder {
         this.setTitle(TITLE).setView(dialogLayout).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                context.startActivity(new Intent(context, MapsActivity.class));
+                if (!filename.equals(""))
+                    listener.onFileSelected(filename);
+                //context.startActivity(new Intent(context, MapsActivity.class));
             }
         }).setNegativeButton("Cansel", null);
     }
@@ -109,9 +113,10 @@ public class FileDialog extends AlertDialog.Builder {
                 if (files.get(position).isDirectory()) {
                     refreshDialogView(files.get(position).getAbsolutePath());
                 } else {
-                    Intent intent = new Intent(context, MapsActivity.class);
+                    /*Intent intent = new Intent(context, MapsActivity.class);
                     intent.putExtra("path", files.get(position).getAbsolutePath());
-                    context.startActivity(intent);
+                    context.startActivity(intent);*/
+                    filename = files.get(position).getAbsolutePath();
                     //view.setSelected(true);
                 }
             }
@@ -139,6 +144,11 @@ public class FileDialog extends AlertDialog.Builder {
             directory = directory.getParentFile();
         } while (directory.getParent() != null);
         return  list;
+    }
+
+    public FileDialog setListener(DialogListener listener) {
+        this.listener = listener;
+        return this;
     }
 
     private void getFileList(String path) {
@@ -184,8 +194,6 @@ public class FileDialog extends AlertDialog.Builder {
             this.directory = directory;
             this.setText(this.directory);
         }
-
-
 
     }
 

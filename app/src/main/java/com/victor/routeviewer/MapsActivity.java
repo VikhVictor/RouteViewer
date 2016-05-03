@@ -2,6 +2,7 @@ package com.victor.routeviewer;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toolbar;
 
@@ -16,13 +17,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.xmlpull.v1.XmlPullParserFactory;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SupportMapFragment mFragment;
 
-    Toolbar toolbar;
-
+    android.support.v7.widget.Toolbar toolbar;
 
     //private
     Route route;
@@ -31,8 +31,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.maps_toolbar);
+        initToolbar();
         route = new Route(this, getIntent().getExtras().getString("path"));
         setUpMapIfNeeded();
+    }
+
+    private int initToolbar() {
+        if (toolbar == null) { return -1; }
+
+        toolbar.setTitle("Map");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        return 0;
     }
 
     @Override
