@@ -9,6 +9,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -30,10 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        route = new Route(this, R.raw.track1);
-        for (LatLng ll : route.waypoints) {
-            Log.d("MyLog", " lon : " + ll.longitude + " lan : " + ll.latitude);
-        }
+        route = new Route(this, getIntent().getExtras().getString("path"));
         setUpMapIfNeeded();
     }
 
@@ -57,6 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setUpMap() {
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
+        settings.setZoomGesturesEnabled(true);
         mMap.addMarker(new MarkerOptions().position(route.waypoints.get(0)).title("Start"));
         mMap.addMarker(new MarkerOptions().position(route.waypoints.get(route.waypoints.size() - 1)).title("Finish"));
         mMap.addPolyline(new PolylineOptions().addAll(route.waypoints));

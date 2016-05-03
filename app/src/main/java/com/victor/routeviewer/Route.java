@@ -8,6 +8,9 @@ import com.google.android.gms.maps.model.LatLng;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -22,12 +25,14 @@ public class Route {
 
     ArrayList<LatLng> waypoints;
     Context context;
+    String path;
     String trackName;
     int trackId;
 
-    public Route (Context context, int id) {
-        trackId = id;
+    public Route (Context context, String path) {
+        //trackId = id;
         this.context = context;
+        this.path = path;
         waypoints = new ArrayList<LatLng>();
         Log.d("MyLog", "Route constructor");
         loadWayPoints();
@@ -38,7 +43,9 @@ public class Route {
 
         try {
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-            parser.setInput(context.getResources().openRawResource(R.raw.track2), "iso-8859-1");
+            //parser.setInput(context.getResources().openRawResource(R.raw.track2), "iso-8859-1");
+            File gpx = new File(path);
+            parser.setInput(new FileInputStream(gpx), "iso-8859-1");
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
 
                 switch (parser.getEventType()) {
