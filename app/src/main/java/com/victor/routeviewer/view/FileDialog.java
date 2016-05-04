@@ -1,12 +1,8 @@
-package com.victor.routeviewer;
+package com.victor.routeviewer.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,21 +11,18 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
+
+import com.victor.routeviewer.DialogListener;
+import com.victor.routeviewer.R;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Виктор on 03.05.2016.
- */
+
 public class FileDialog extends AlertDialog.Builder {
 
     private Context context;
@@ -42,8 +35,6 @@ public class FileDialog extends AlertDialog.Builder {
     List<File> files;
     ArrayList<String> filenames;
     private DialogListener listener;
-    private String filename = "";
-
 
     public FileDialog(final Context context) {
         super(context);
@@ -51,14 +42,7 @@ public class FileDialog extends AlertDialog.Builder {
         initDialogView();
         refreshDialogView(Environment.getExternalStorageDirectory().toString());
 
-        this.setTitle(R.string.dialog_hint).setView(dialogLayout).setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!filename.equals(""))
-                    listener.onFileSelected(filename);
-                //context.startActivity(new Intent(context, MapsActivity.class));
-            }
-        }).setNegativeButton(R.string.cancel_button, null);
+        this.setTitle(R.string.dialog_hint).setView(dialogLayout).setNegativeButton(R.string.cancel_button, null);
     }
 
     private void refreshDialogView(String path) {
@@ -89,26 +73,27 @@ public class FileDialog extends AlertDialog.Builder {
         breadCrumbs.setHorizontalScrollBarEnabled(true);
         breadCrumbs.setVerticalScrollBarEnabled(true);
         breadCrumbs.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                ViewGroup.LayoutParams.WRAP_CONTENT));
         scrollLayout = new LinearLayout(context);
         scrollLayout.setOrientation(LinearLayout.HORIZONTAL);
         scrollLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                ViewGroup.LayoutParams.WRAP_CONTENT));
         breadCrumbs.addView(scrollLayout);
         dialogLayout.addView(breadCrumbs);
 
         fileList = new ListView(context);
-        fileList.setSelected(true);
+        fileList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (files.get(position).isDirectory()) {
                     refreshDialogView(files.get(position).getAbsolutePath());
                 } else {
-                    filename = files.get(position).getAbsolutePath();
+                    listener.onFileSelected(files.get(position).getAbsolutePath());
                 }
             }
         });
+
         dialogLayout.addView(fileList);
         filenames = new ArrayList<String>();
         files = new ArrayList<File>();

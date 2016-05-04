@@ -1,6 +1,5 @@
 package com.victor.routeviewer;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -10,7 +9,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -23,7 +21,7 @@ public class Route {
     private static final String ATTR_LON = "lon";
     private static final String ATTR_LAT = "lat";
 
-    ArrayList<LatLng> waypoints;
+    public ArrayList<LatLng> waypoints;
     String path;
 
     public Route (String path) {
@@ -77,6 +75,7 @@ public class Route {
 
 
     }
+
 
 
 }

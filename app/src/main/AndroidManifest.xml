@@ -26,7 +26,8 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MenuActivity"
+            android:name=".activity.MenuActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_menu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +37,8 @@
         </activity>
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activity.MapsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps" >
         </activity>
     </application>
