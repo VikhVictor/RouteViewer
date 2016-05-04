@@ -24,17 +24,11 @@ public class Route {
     private static final String ATTR_LAT = "lat";
 
     ArrayList<LatLng> waypoints;
-    Context context;
     String path;
-    String trackName;
-    int trackId;
 
-    public Route (Context context, String path) {
-        //trackId = id;
-        this.context = context;
+    public Route (String path) {
         this.path = path;
         waypoints = new ArrayList<LatLng>();
-        Log.d("MyLog", "Route constructor");
         loadWayPoints();
 
     }

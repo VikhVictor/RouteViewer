@@ -8,5 +8,7 @@
     <string name="add_button">Open</string>
 
     <string name="dialog_hint">Open .gpx file</string>
+    <string name="empty_user_routes">Press + to add route</string>
+    <string name="progress_message">Loading route</string>
 
 </resources>

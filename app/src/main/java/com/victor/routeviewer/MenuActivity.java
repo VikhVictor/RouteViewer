@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -24,13 +25,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class MenuActivity extends AppCompatActivity implements View.OnClickListener{
+public class MenuActivity extends AppCompatActivity {
 
 
     private static final String SET_KEY = "routes";
     public static final String INTENT_KEY_PATH = "path";
 
-    Button bOpen;
     Toolbar toolbar;
     ListView list;
     ArrayAdapter<String> adapter;
@@ -42,16 +42,30 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.title_activity_menu);
-        setSupportActionBar(toolbar);
+        initToolbar();
 
         userRoutes = new ArrayList<String>();
         list = (ListView) findViewById(R.id.listView);
         loadUserRoutes();
 
-        bOpen = (Button) findViewById(R.id.b_open);
-        bOpen.setOnClickListener(this);
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_menu);
+        toolbar.inflateMenu(R.menu.toolbar_tools);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_add :
+                        openFileDialog();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     private void loadUserRoutes() {
@@ -59,7 +73,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         Set<String> set = preferences.getStringSet(SET_KEY, null);
         if (set == null) {
             userRoutes.clear();
-            userRoutes.add("empty");
+            userRoutes.add(getResources().getString(R.string.empty_user_routes));
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
             list.setAdapter(adapter);
         } else {
@@ -80,8 +94,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
+    public void openFileDialog() {
         FileDialog dialogBuilder = new FileDialog(this);
         dialogBuilder.setListener(new DialogListener() {
             @Override

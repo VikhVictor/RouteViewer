@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--<item
+        android:id="@+id/action_search"
+        android:title="Set"
+        app:showAsAction="always" />-->
+    <item
+        android:id="@+id/action_view"
+        android:title="View"
+        android:icon="@drawable/dots"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/action_focus"
+        android:title="Focus"
+        android:icon="@drawable/focus"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/action_local_map"
+        android:title="Карта местности"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_map"
+        android:title="Спутниковая карта"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_info"
+        android:title="Информация"
+        app:showAsAction="never"
+        />
+
+</menu>

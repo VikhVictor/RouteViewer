@@ -8,5 +8,7 @@
     <string name="add_button">Открыть...</string>
 
     <string name="dialog_hint">Откройте .gpx файл</string>
+    <string name="empty_user_routes">Нажмите + чтобы добавить маршрут</string>
+    <string name="progress_message">Загрузка маршрута</string>
 
 </resources>
