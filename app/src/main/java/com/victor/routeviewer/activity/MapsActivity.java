@@ -1,8 +1,11 @@
 package com.victor.routeviewer.activity;
 
+import android.graphics.Color;
 import android.os.PersistableBundle;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -16,13 +19,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import com.google.gson.Gson;
 import com.victor.routeviewer.R;
 import com.victor.routeviewer.Route;
 import com.victor.routeviewer.RouteLoader;
 
 import java.util.concurrent.ExecutionException;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String KEY_ROUTE = "state";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -30,38 +34,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     android.support.v7.widget.Toolbar toolbar;
 
-    //private
     Route route;
     private boolean drawDots = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.maps_toolbar);
-        initToolbar();
-    /*    if (savedInstanceState != null && savedInstanceState.get(KEY_ROUTE) != null) {
+        if (savedInstanceState != null && savedInstanceState.get(KEY_ROUTE) != null) {
             Gson gson = new Gson();
             route = gson.fromJson(savedInstanceState.getString(KEY_ROUTE), Route.class);
-        } else {*/
+        } else {
             RouteLoader loader = new RouteLoader(this);
-        try {
-            route = loader.execute(getIntent().getExtras().getString(MenuActivity.INTENT_KEY_PATH)).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            try {
+                route = loader.execute(getIntent().getExtras().getString(MenuActivity.INTENT_KEY_PATH)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-        //  }
+        setContentView(R.layout.activity_maps);
+        toolbar = new android.support.v7.widget.Toolbar(this);
+        //setSupportActionBar(toolbar);
+
+        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.maps_toolbar);
+        initToolbar();
+
         setUpMapIfNeeded();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        /*Log.d("MyLog", "on destroy");
-        getSupportFragmentManager().beginTransaction().remove(spf).commit();
-        Log.d("MyLog", "Fragment removed");*/
     }
 
     private int initToolbar() {
@@ -139,25 +143,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        /*Log.d("MyLog", "OnSaveState");
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         if (route != null) {
+            //mFragment.onSaveInstanceState(outState);
             Gson gson = new Gson();
             outState.putString(KEY_ROUTE, gson.toJson(route));
-            Log.d("MyLog", outState.getString(KEY_ROUTE));
-            //Log.d("MyLog", gson.toJson(route));
-        }*/
+        }
     }
 
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
             mFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
             mFragment.getMapAsync(this);
-            // Check if we were successful in obtaining the map.
-            Log.d("MyLog", "setup map");
             if (mMap != null) {
                 setUpMap();
             }

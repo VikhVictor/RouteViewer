@@ -35,12 +35,14 @@ public class FileDialog extends AlertDialog.Builder {
     List<File> files;
     ArrayList<String> filenames;
     private DialogListener listener;
+    private String currentPath;
 
-    public FileDialog(final Context context) {
+    public FileDialog(final Context context, String path) {
         super(context);
         this.context = context;
         initDialogView();
-        refreshDialogView(Environment.getExternalStorageDirectory().toString());
+        currentPath = path;
+        refreshDialogView(currentPath);
 
         this.setTitle(R.string.dialog_hint).setView(dialogLayout).setNegativeButton(R.string.cancel_button, null);
     }
@@ -86,10 +88,12 @@ public class FileDialog extends AlertDialog.Builder {
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                currentPath = files.get(position).getAbsolutePath();
                 if (files.get(position).isDirectory()) {
-                    refreshDialogView(files.get(position).getAbsolutePath());
+                    currentPath = files.get(position).getAbsolutePath();
+                    refreshDialogView(currentPath);
                 } else {
-                    listener.onFileSelected(files.get(position).getAbsolutePath());
+                    listener.onFileSelected(currentPath);
                 }
             }
         });
@@ -156,6 +160,10 @@ public class FileDialog extends AlertDialog.Builder {
         }
     }
 
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
     class Crumb extends Button {
 
         String path;
@@ -169,6 +177,5 @@ public class FileDialog extends AlertDialog.Builder {
         }
 
     }
-
 
 }

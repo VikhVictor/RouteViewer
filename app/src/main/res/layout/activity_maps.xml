@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
+
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/maps_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="#9575CD"
+        android:titleTextColor="#FFFFFF"/>
 
     <fragment
         android:layout_width="match_parent"
@@ -10,17 +22,10 @@
         class="com.google.android.gms.maps.SupportMapFragment" >
 
 
-        <android.support.v7.widget.Toolbar
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/maps_toolbar"
-            android:alpha="140"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:background="#9575CD"
-            android:titleTextColor="#FFFFFF"/>
+
 
     </fragment>
 
 
-</RelativeLayout>
+</LinearLayout>
 

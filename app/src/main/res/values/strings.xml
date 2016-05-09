@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">RouteViewer</string>
+    <string name="app_name">Route Viewer</string>
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_menu">My routes</string>
 
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>

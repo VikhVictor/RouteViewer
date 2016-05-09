@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">RouteViewer</string>
+    <string name="app_name">Route Viewer</string>
     <string name="title_activity_maps">Карта</string>
-    <string name="title_activity_menu">Меню</string>
+    <string name="title_activity_menu">Мои маршруты</string>
 
     <string name="ok_button">Выбрать</string>
     <string name="cancel_button">Отмена</string>

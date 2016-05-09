@@ -62,12 +62,12 @@ public class RouteLoader extends AsyncTask<String, Void, Route> {
                     switch (parser.getEventType()) {
 
                         case XmlPullParser.START_DOCUMENT:
-                            Log.d("MyLog", "start document");
+                            //Log.d("MyLog", "start document");
                             break;
                         case XmlPullParser.START_TAG: {
                             String tag = parser.getName();
                             if (tag.equals(TAG_TRACK)) {
-                                Log.d("MyLog", "namespace count : " + parser.getNamespaceCount(parser.getDepth()) + "");
+                                //Log.d("MyLog", "namespace count : " + parser.getNamespaceCount(parser.getDepth()) + "");
                             }
 
                             if (tag.equals(TAG_POINT)) {
@@ -77,7 +77,7 @@ public class RouteLoader extends AsyncTask<String, Void, Route> {
                             }
 
                             if (tag.equals(TAG_TIME)) {
-                                Log.d("MyLog", "flag " + parser.getName());
+                                //Log.d("MyLog", "flag " + parser.getName());
                                 parser.next();
                                 route.addWaypointTime(parser.getText());
                             }
