@@ -3,6 +3,7 @@ package com.victor.routeviewer.activity;
 import android.os.PersistableBundle;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,8 +27,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_ROUTE = "state";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SupportMapFragment mFragment;
-
-
 
     android.support.v7.widget.Toolbar toolbar;
 
@@ -104,22 +103,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mMap != null && route != null) {
             mMap.clear();
             if (drawDots) {
-
-                for (LatLng ll : route.waypoints)
+                int i = 0;
+                for (LatLng ll : route.getWaypoints())
                     mMap.addMarker(new MarkerOptions().position(ll)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.point)))
-                            .setTitle("Time");
+                            .setTitle(route.getWaypointTime(i++));
             } else {
-                mMap.addMarker(new MarkerOptions().position(route.waypoints.get(0)).title("Start"));
-                mMap.addMarker(new MarkerOptions().position(route.waypoints.get(route.waypoints.size() - 1)).title("Finish"));
-                mMap.addPolyline(new PolylineOptions().addAll(route.waypoints));
+                mMap.addMarker(new MarkerOptions().position(route.getStartWaypoint()).title(route.getInfo()));
+                mMap.addMarker(new MarkerOptions().position(route.getWaypoints().get(route.getWaypoints().size() - 1)).title("Finish"));
+                mMap.addPolyline(new PolylineOptions().addAll(route.getWaypoints()));
             }
         }
     }
 
     private void focusOnStartPoint() {
         if (mMap != null && route != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.waypoints.get(0), 10));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.getWaypoints().get(0), 10));
         }
     }
 
@@ -158,6 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
             mFragment.getMapAsync(this);
             // Check if we were successful in obtaining the map.
+            Log.d("MyLog", "setup map");
             if (mMap != null) {
                 setUpMap();
             }
@@ -169,15 +169,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         settings.setZoomControlsEnabled(true);
         settings.setZoomGesturesEnabled(true);
         if (route != null) {
-            mMap.addMarker(new MarkerOptions().position(route.waypoints.get(0)).title("Start"));
-            mMap.addMarker(new MarkerOptions().position(route.waypoints.get(route.waypoints.size() - 1)).title("Finish"));
-            mMap.addPolyline(new PolylineOptions().addAll(route.waypoints));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.waypoints.get(0), 10));
+            mMap.addMarker(new MarkerOptions().position(route.getStartWaypoint()).title("Start point : ").snippet(route.getInfo()));
+            mMap.addMarker(new MarkerOptions().position(route.getFinishWaypoint()).title("Finish"));
+            mMap.addPolyline(new PolylineOptions().addAll(route.getWaypoints()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.getWaypoints().get(0), 10));
         }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d("MyLog", "on map ready");
         mMap = googleMap;
         setUpMap();
     }

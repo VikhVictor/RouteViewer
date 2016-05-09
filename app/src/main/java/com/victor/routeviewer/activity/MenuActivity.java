@@ -71,24 +71,23 @@ public class MenuActivity extends AppCompatActivity {
         if (set == null) {
             userRoutes.clear();
             userRoutes.add(getResources().getString(R.string.empty_user_routes));
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
-            list.setAdapter(adapter);
         } else {
             userRoutes.clear();
             for (String s : set) {
                 userRoutes.add(s);
             }
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
-            list.setAdapter(adapter);
-            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                    intent.putExtra(INTENT_KEY_PATH, userRoutes.get(position));
-                    startActivity(intent);
-                }
-            });
         }
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra(INTENT_KEY_PATH, userRoutes.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     public void openFileDialog() {
@@ -110,10 +109,6 @@ public class MenuActivity extends AppCompatActivity {
                 editor.clear();
                 editor.putStringSet(SET_KEY, tmp);
                 editor.commit();
-
-
-                preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                Set<String> set = preferences.getStringSet(SET_KEY, new TreeSet<String>());
 
             }
         });

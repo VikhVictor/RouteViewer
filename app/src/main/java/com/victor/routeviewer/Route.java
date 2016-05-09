@@ -9,73 +9,76 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Date;
 import java.util.ArrayList;
 
 
 public class Route {
 
-    private static final String TAG_TRACK = "trk";
-    private static final String TAG_SEGMENT = "trkseg";
-    private static final String TAG_POINT = "trkpt";
 
-    private static final String ATTR_LON = "lon";
-    private static final String ATTR_LAT = "lat";
+    private ArrayList<LatLng> waypoints;
+    private ArrayList<String> timeList;
+    private String path;
+    private String trackName;
 
-    public ArrayList<LatLng> waypoints;
-    String path;
 
-    public Route (String path) {
-        this.path = path;
-        waypoints = new ArrayList<LatLng>();
-        loadWayPoints();
-
+    public Route () {
+        //this.path = path;
+        waypoints = new ArrayList<>();
+        timeList = new ArrayList<>();
     }
 
-    private void loadWayPoints() {
+//    pu
 
-        try {
-            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-            //parser.setInput(context.getResources().openRawResource(R.raw.track2), "iso-8859-1");
-            File gpx = new File(path);
-            parser.setInput(new FileInputStream(gpx), "iso-8859-1");
-            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+    public void setTrackName(String name) {
+        trackName = name;
+    }
 
-                switch (parser.getEventType()) {
+    public String getTrackName() {
+        return trackName;
+    }
 
-                    case XmlPullParser.START_DOCUMENT :
-                        Log.d("MyLog", "start document");
-                        break;
-                    case XmlPullParser.START_TAG : {
-                        String tag = parser.getName();
-                        if (tag.equals(TAG_TRACK)) {
+    public void addWaypoint(LatLng p) {
+        waypoints.add(p);
+    }
 
-                        }
-                        if (tag.equals(TAG_SEGMENT)) {
+    public void addWaypointTime(String time) {
+        timeList.add(time);
+    }
 
-                        }
-                        if (tag.equals(TAG_POINT)) {
+    public String getRouteInfo() {
+        return "";
+    }
 
-                            waypoints.add(new LatLng(Double.parseDouble(parser.getAttributeValue(null, ATTR_LAT)),
-                                                    Double.parseDouble(parser.getAttributeValue(null, ATTR_LON))));
-                        }
-                        break;
-                    }
+    public ArrayList<LatLng> getWaypoints() {
+        return waypoints;
+    }
 
-                    case XmlPullParser.END_DOCUMENT :
-                        Log.d("MyLog", "end of document");
-                        break;
-                    default:
-                        break;
-                }
-                parser.next();
-            }
-        } catch (Exception e) {
-            Log.i("MyLog", "Failed in parsing XML", e);
+    public LatLng getStartWaypoint() {
+        if (waypoints.size() != 0)
+            return waypoints.get(0);
+        else
+            return new LatLng(0,0);
+    }
+
+    public LatLng getFinishWaypoint() {
+        if (waypoints.size() != 0) {
+            return waypoints.get(waypoints.size() - 1);
+        } else {
+            return new LatLng(0,0);
         }
-
-
     }
 
+    public String getWaypointTime(int i) {
+        if (i < timeList.size()) {
+            return timeList.get(i);
+        } else {
+            return "none";
+        }
+    }
 
-
+    public String getInfo() {
+        Log.d("MyLog", "Route's start : \n" + waypoints.size() + " waypoints\n" + timeList.get(0));
+        return waypoints.size() + " waypoints " + timeList.get(0);
+    }
 }
