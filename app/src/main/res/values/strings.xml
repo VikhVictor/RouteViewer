@@ -11,6 +11,12 @@
     <string name="empty_user_routes">Press + to add route</string>
     <string name="progress_message">Loading route</string>
 
+    <string name="error">Error</string>
+    <string name="error_ok">Back</string>
+    <string name="error1">File not found</string>
+    <string name="error2">File is empty</string>
+    <string name="error3">Bad file data</string>
+
     <string name="size">MB</string>
 
 </resources>

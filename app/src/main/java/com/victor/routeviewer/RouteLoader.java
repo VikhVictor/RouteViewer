@@ -15,15 +15,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.ArrayList;
 
 
 public class RouteLoader extends AsyncTask<String, Void, Route> {
 
     private static final String TAG_TIME = "time";
+
+    private static final int ERR_FILE_UNEXIST = -1;
+    private static final int ERR_FILE_EMPTY = -2;
+    private static final int ERR_BAD_DATA = -3;
+
     private LockProgressDialog progress;
     private Context context;
+
+    private OnLoadCallback response;
 
     private static final String TAG_TRACK = "trk";
     private static final String TAG_SEGMENT = "trkseg";
@@ -32,9 +37,21 @@ public class RouteLoader extends AsyncTask<String, Void, Route> {
     private static final String ATTR_LON = "lon";
     private static final String ATTR_LAT = "lat";
 
+    /*
+        ERR_FILE_UNEXIST - файл отсутствует
+        ERR_FILE_EMPTY - файл пустой
+        ERR_BAD_DATA - ошибка при чтении
+
+     */
+    int error = 0;
+
 
     public RouteLoader(Context context) {
         this.context = context;
+    }
+
+    public void setOnLoadingFinishListener(OnLoadCallback listener) {
+        this.response = listener;
     }
 
     @Override
@@ -86,25 +103,32 @@ public class RouteLoader extends AsyncTask<String, Void, Route> {
                         }
 
                         case XmlPullParser.END_DOCUMENT:
-                            Log.d("MyLog", "end of document");
                             break;
                         default:
                             break;
                     }
                     parser.next();
                 }
+                if (route.getWaypoints().size() == 0) {
+                    error = ERR_FILE_EMPTY;
+                    return null;
+                }
                 return route;
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                error = ERR_FILE_UNEXIST;
+                //e.printStackTrace();
                 return null;
             } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                error = ERR_BAD_DATA;
+                //e.printStackTrace();
                 return null;
             } catch (IOException e) {
-                e.printStackTrace();
+                error = ERR_BAD_DATA;
+                //e.printStackTrace();
                 return null;
             }
         } else {
+            error = ERR_FILE_UNEXIST;
             return null;
         }
     }
@@ -114,6 +138,7 @@ public class RouteLoader extends AsyncTask<String, Void, Route> {
     @Override
     protected void onPostExecute(Route route) {
         super.onPostExecute(route);
+        response.onLoadingFinish(route, error);
         progress.cancel();
     }
 }

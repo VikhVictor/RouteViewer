@@ -13,4 +13,10 @@
 
     <string name="size">Мб</string>
 
+    <string name="error_ok">Вернуться</string>
+    <string name="error">Ошибка</string>
+    <string name="error1">Файл не найден</string>
+    <string name="error2">Маршрут не найден.\n Пустой файл.</string>
+    <string name="error3">Ошибка при чтении.\n Файл поврежден</string>
+
 </resources>

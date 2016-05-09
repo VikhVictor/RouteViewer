@@ -27,7 +27,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity
+                            implements android.support.v7.widget.Toolbar.OnMenuItemClickListener,
+                                        DialogListener {
 
 
     private static final String SET_KEY = "routes";
@@ -57,51 +59,18 @@ public class MenuActivity extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.listView);
         items = new ArrayList<RouteItem>();
-        /*items.add(new RouteItem("sdcard0/test.gpx", "2.4mb"));
-        items.add(new RouteItem("sdcard0/test12.gpx", "1.6mb"));
-        items.add(new RouteItem("sdcard0/testadd.gpx", "5.1mb"));
-        list.setAdapter(new RouteAdapter(this, items));*/
         loadUserRoutes();
         loadSavedInstance(savedInstanceState);
-        setDialogListener();
+        dialogBuilder.setListener(this);
     }
 
-    private void setDialogListener() {
-        dialogBuilder.setListener(new DialogListener() {
-            @Override
-            public void onFileSelected(String gpx) {
-                alert.cancel();
-                isOpenDialog = false;
-                //save path to userRoutes
-                preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                Set<String> tmp = preferences.getStringSet(SET_KEY, new TreeSet<String>());
-                tmp.add(gpx);
-                items.clear();
-                for (String s : tmp) {
-                    File f = new File(s);
-                    if (f.exists()) {
-                        items.add(new RouteItem(s, String.format("%.2f ", f.length() / 1024.0 / 1024.0)
-                                        + getResources().getString(R.string.size)));
-                    }
-                }
-                adapter.notifyDataSetChanged();
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.putStringSet(SET_KEY, tmp);
-                editor.commit();
-
-            }
-        });
-    }
 
     private void loadSavedInstance(Bundle savedInstanceState) {
         if (savedInstanceState != null && savedInstanceState.getBoolean(BUNDLE_KEY_DIALOG_STATE)) {
-            Log.d("MyLog", "saved instance != null " + savedInstanceState.getString(BUNDLE_KEY_DIALOG_PATH));
             isOpenDialog = true;
             if (savedInstanceState.getString(BUNDLE_KEY_DIALOG_PATH) != null)
                 path = savedInstanceState.getString(BUNDLE_KEY_DIALOG_PATH);
         }
-        Log.d("MyLog", "try create new file dialog");
         dialogBuilder = new FileDialog(this, path);
         if (isOpenDialog) {
             alert = dialogBuilder.create();
@@ -122,21 +91,7 @@ public class MenuActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_menu);
         toolbar.inflateMenu(R.menu.toolbar_tools);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_add : {
-                        alert = dialogBuilder.create();
-                        isOpenDialog = true;
-                        alert.show();
-                        return true;
-                    }
-                    default:
-                        return false;
-                }
-            }
-        });
+        toolbar.setOnMenuItemClickListener(this);
     }
 
     private void loadUserRoutes() {
@@ -167,4 +122,42 @@ public class MenuActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add: {
+                dialogBuilder = new FileDialog(this, path);
+                dialogBuilder.setListener(this);
+                alert = dialogBuilder.create();
+                isOpenDialog = true;
+                alert.show();
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onFileSelected(String gpx) {
+        alert.cancel();
+        isOpenDialog = false;
+        //save path to userRoutes
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Set<String> tmp = preferences.getStringSet(SET_KEY, new TreeSet<String>());
+        tmp.add(gpx);
+        items.clear();
+        for (String s : tmp) {
+            File f = new File(s);
+            if (f.exists()) {
+                items.add(new RouteItem(s, String.format("%.2f ", f.length() / 1024.0 / 1024.0)
+                        + getResources().getString(R.string.size)));
+            }
+        }
+        adapter.notifyDataSetChanged();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.putStringSet(SET_KEY, tmp);
+        editor.commit();
+    }
 }

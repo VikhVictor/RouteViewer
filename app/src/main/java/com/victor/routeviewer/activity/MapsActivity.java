@@ -1,11 +1,9 @@
 package com.victor.routeviewer.activity;
 
-import android.graphics.Color;
-import android.os.PersistableBundle;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -20,17 +18,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.google.gson.Gson;
+import com.victor.routeviewer.OnLoadCallback;
 import com.victor.routeviewer.R;
 import com.victor.routeviewer.Route;
 import com.victor.routeviewer.RouteLoader;
 
-import java.util.concurrent.ExecutionException;
-
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, OnLoadCallback {
 
     private static final String KEY_ROUTE = "state";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SupportMapFragment mFragment;
+    RouteLoader loader;
 
     android.support.v7.widget.Toolbar toolbar;
 
@@ -44,14 +42,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Gson gson = new Gson();
             route = gson.fromJson(savedInstanceState.getString(KEY_ROUTE), Route.class);
         } else {
-            RouteLoader loader = new RouteLoader(this);
-            try {
-                route = loader.execute(getIntent().getExtras().getString(MenuActivity.INTENT_KEY_PATH)).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            loader = new RouteLoader(this);
+            loader.setOnLoadingFinishListener(this);
+            route = null;
+            loader.execute(getIntent().getExtras().getString(MenuActivity.INTENT_KEY_PATH));
         }
         setContentView(R.layout.activity_maps);
         toolbar = new android.support.v7.widget.Toolbar(this);
@@ -105,13 +99,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void changeRouteView() {
         if (mMap != null && route != null) {
-            mMap.clear();
             if (drawDots) {
-                int i = 0;
-                for (LatLng ll : route.getWaypoints())
-                    mMap.addMarker(new MarkerOptions().position(ll)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.point)))
-                            .setTitle(route.getWaypointTime(i++));
+                mMap.clear();
             } else {
                 mMap.addMarker(new MarkerOptions().position(route.getStartWaypoint()).title(route.getInfo()));
                 mMap.addMarker(new MarkerOptions().position(route.getWaypoints().get(route.getWaypoints().size() - 1)).title("Finish"));
@@ -149,6 +138,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //mFragment.onSaveInstanceState(outState);
             Gson gson = new Gson();
             outState.putString(KEY_ROUTE, gson.toJson(route));
+        } else {
+            if (loader != null) {
+                loader.cancel(true);
+            }
         }
     }
 
@@ -182,4 +175,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    @Override
+    public void onLoadingFinish(Route route, int error) {
+        if (route != null) {
+            this.route = route;
+            if (mMap != null) {
+                setUpMap();
+            } else {
+                setUpMapIfNeeded();
+            }
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getResources().getString(R.string.error))
+                    .setPositiveButton(getResources().getString(R.string.error_ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    }).setMessage(getResources().getIdentifier("error" + -error, "string", getPackageName()));
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+    }
 }
