@@ -11,4 +11,6 @@
     <string name="empty_user_routes">Press + to add route</string>
     <string name="progress_message">Loading route</string>
 
+    <string name="size">MB</string>
+
 </resources>

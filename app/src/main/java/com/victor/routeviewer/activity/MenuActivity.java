@@ -16,9 +16,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.victor.routeviewer.DialogListener;
+import com.victor.routeviewer.RouteAdapter;
+import com.victor.routeviewer.RouteItem;
 import com.victor.routeviewer.view.FileDialog;
 import com.victor.routeviewer.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,8 +40,8 @@ public class MenuActivity extends AppCompatActivity {
     ListView list;
     FileDialog dialogBuilder;
 
-    ArrayAdapter<String> adapter;
-    ArrayList<String> userRoutes;
+    ArrayList<RouteItem> items;
+    RouteAdapter adapter;
     AlertDialog alert;
     SharedPreferences preferences;
     private String path;
@@ -52,8 +55,12 @@ public class MenuActivity extends AppCompatActivity {
         isOpenDialog = false;
         initToolbar();
 
-        userRoutes = new ArrayList<String>();
         list = (ListView) findViewById(R.id.listView);
+        items = new ArrayList<RouteItem>();
+        /*items.add(new RouteItem("sdcard0/test.gpx", "2.4mb"));
+        items.add(new RouteItem("sdcard0/test12.gpx", "1.6mb"));
+        items.add(new RouteItem("sdcard0/testadd.gpx", "5.1mb"));
+        list.setAdapter(new RouteAdapter(this, items));*/
         loadUserRoutes();
         loadSavedInstance(savedInstanceState);
         setDialogListener();
@@ -69,9 +76,13 @@ public class MenuActivity extends AppCompatActivity {
                 preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 Set<String> tmp = preferences.getStringSet(SET_KEY, new TreeSet<String>());
                 tmp.add(gpx);
-                userRoutes.clear();
+                items.clear();
                 for (String s : tmp) {
-                    userRoutes.add(s);
+                    File f = new File(s);
+                    if (f.exists()) {
+                        items.add(new RouteItem(s, String.format("%.2f ", f.length() / 1024.0 / 1024.0)
+                                        + getResources().getString(R.string.size)));
+                    }
                 }
                 adapter.notifyDataSetChanged();
                 SharedPreferences.Editor editor = preferences.edit();
@@ -132,22 +143,25 @@ public class MenuActivity extends AppCompatActivity {
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Set<String> set = preferences.getStringSet(SET_KEY, null);
         if (set == null) {
-            userRoutes.clear();
-            userRoutes.add(getResources().getString(R.string.empty_user_routes));
+            items.clear();
+            items.add(new RouteItem(getResources().getString(R.string.empty_user_routes), ""));
         } else {
-            userRoutes.clear();
+            items.clear();
             for (String s : set) {
-                userRoutes.add(s);
+                File f = new File(s);
+                if (f.exists()) {
+                    items.add(new RouteItem(s, String.format("%.2f", f.length() / 1024.0 / 1024.0)
+                            + getResources().getString(R.string.size)));
+                }
             }
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
         }
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userRoutes);
+        adapter = new RouteAdapter(this, items);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra(INTENT_KEY_PATH, userRoutes.get(position));
+                intent.putExtra(INTENT_KEY_PATH, items.get(position).getPath());
                 startActivity(intent);
             }
         });

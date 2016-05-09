@@ -11,4 +11,6 @@
     <string name="empty_user_routes">Нажмите + чтобы добавить маршрут</string>
     <string name="progress_message">Загрузка маршрута</string>
 
+    <string name="size">Мб</string>
+
 </resources>
